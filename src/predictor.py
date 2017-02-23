@@ -10,8 +10,7 @@ def predict(img, HYPARMS):
     sess = tf.Session()
     ckpt = tf.train.get_checkpoint_state(HYPARMS.ckpt_dir)
     saver = tf.train.Saver()
-    ckpt_name = HYPARMS.ckpt_name
-    saver.restore(sess, ckpt.ckpt_name)
+    saver.restore(sess, ckpt.model_checkpoint_path)
 
     placebundle = placeholder_inputs(1)
     logits = graph_model(placebundle)

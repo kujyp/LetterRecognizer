@@ -48,7 +48,7 @@ def run_training(HYPARMS):
 
             # Save a checkpoint and evaluate the model periodically.
             if (step + 1) % 1000 == 0 or (step + 1) == HYPARMS.max_steps:
-                checkpoint_file = os.path.join(HYPARMS.log_dir, 'model.ckpt')
+                checkpoint_file = os.path.join(HYPARMS.ckpt_dir, HYPARMS.ckpt_name)
                 saver.save(sess, checkpoint_file, global_step=step)
                 # Evaluate against the training set.
                 print('Training Data Eval:')
