@@ -20,10 +20,14 @@ class Recognizer:
         return self.getPredict(input)
 
     def preprocess(self, input):
-        input = self.resize(input)
+        input = input.resize([28,28])
+        input = input.convert('L')
+        input = numpy.array(input)
+        input = input.reshape([1, 784])
         return input
 
     def resize(self, input):
+        input.resize([28,28])
         return input
 
     def getPredict(self, input):
@@ -44,7 +48,7 @@ def load_params():
 
 def load_image(filename):
     img = Image.open(filename)
-    return numpy.array(img)
+    return img
 
 def main(_):
     HYPARMS = load_params()
@@ -52,8 +56,9 @@ def main(_):
         tf.gfile.DeleteRecursively(HYPARMS.log_dir)
     tf.gfile.MakeDirs(HYPARMS.log_dir)
 
-    input = load_image(os.path.join('input', 'mnist.jpeg'))
-    print("Answer : " + Recognizer(HYPARMS).run(input))
+    input = load_image(os.path.join('input', 'mnist5.png'))
+    print("Answer : ")
+    print(Recognizer(HYPARMS).run(input))
     # while(True):
     #     filename = 'mnist.jpeg'
     #     if(False):
