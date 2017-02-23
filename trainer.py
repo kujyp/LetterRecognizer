@@ -20,6 +20,9 @@ def main(_):
     if tf.gfile.Exists(HYPARMS.log_dir):
         tf.gfile.DeleteRecursively(HYPARMS.log_dir)
     tf.gfile.MakeDirs(HYPARMS.log_dir)
+
+    tf.gfile.MakeDirs(HYPARMS.ckpt_dir)
+
     run_training(HYPARMS)
 
 if __name__ == '__main__':

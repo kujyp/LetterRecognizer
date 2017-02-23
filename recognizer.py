@@ -12,9 +12,9 @@ from src.params import Hyparms
 from src.train_runner import run_training
 from src.predictor import predict
 
-HYPARMS = None
-
 class Recognizer:
+    def __init__(self,HYPARMS):
+        self.HYPARMS = HYPARMS
     def run(self,input):
         input = self.preprocess(input)
         return self.getPredict(input)
@@ -27,7 +27,7 @@ class Recognizer:
         return input
 
     def getPredict(self, input):
-        return predict(input, HYPARMS)
+        return predict(input, self.HYPARMS)
 
 def load_params():
     HYPARMS = Hyparms()
@@ -53,7 +53,7 @@ def main(_):
     tf.gfile.MakeDirs(HYPARMS.log_dir)
 
     input = load_image(os.path.join('input', 'mnist.jpeg'))
-    print("Answer : " + Recognizer().run(input))
+    print("Answer : " + Recognizer(HYPARMS).run(input))
     # while(True):
     #     filename = 'mnist.jpeg'
     #     if(False):

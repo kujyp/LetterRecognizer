@@ -9,6 +9,9 @@ from train_model import placeholder_inputs, graph_model, calcul_loss, training, 
 def predict(img, HYPARMS):
     sess = tf.Session()
     ckpt = tf.train.get_checkpoint_state(HYPARMS.ckpt_dir)
+
+    placebundle = placeholder_inputs(HYPARMS.batch_size)
+
     saver = tf.train.Saver()
     saver.restore(sess, ckpt.model_checkpoint_path)
 
