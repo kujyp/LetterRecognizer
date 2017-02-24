@@ -10,11 +10,11 @@ from PIL import Image
 
 from src.params import Hyparms
 from src.train_runner import run_training
-from src.predictor import predict
+from src.predictor import Predictor
 
 class Recognizer:
-    def __init__(self,HYPARMS):
-        self.HYPARMS = HYPARMS
+    def __init__(self,predictor):
+        self.predictor = predictor
     def run(self,input):
         input = self.preprocess(input)
         return self.getPredict(input)
@@ -31,7 +31,18 @@ class Recognizer:
         return input
 
     def getPredict(self, input):
-        return predict(input, self.HYPARMS)
+        return self.predictor.predict(input)
+
+
+def allfiles(path):
+    res = []
+
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            filepath = os.path.join(os.path.abspath(path), file)
+            res.append(filepath)
+
+    return res
 
 def load_params():
     HYPARMS = Hyparms()
@@ -50,22 +61,26 @@ def load_image(filename):
     img = Image.open(filename)
     return img
 
+def print_prediction(file, predictor):
+    input = load_image(file)
+    print("File : ")
+    print(file)
+    print("Answer : ")
+    print(Recognizer(predictor).run(input))
+
+
 def main(_):
     HYPARMS = load_params()
     if tf.gfile.Exists(HYPARMS.log_dir):
         tf.gfile.DeleteRecursively(HYPARMS.log_dir)
     tf.gfile.MakeDirs(HYPARMS.log_dir)
 
-    input = load_image(os.path.join('input', 'mnist5.png'))
-    print("Answer : ")
-    print(Recognizer(HYPARMS).run(input))
-    # while(True):
-    #     filename = 'mnist.jpeg'
-    #     if(False):
-    #         break
-    #     else:
-    #         input = load_image(os.path.join('input',filename))
-    #         print("Answer : " + Recognizer().run(input))
+    predictor = Predictor(HYPARMS)
+
+    files = allfiles(HYPARMS.input_data_dir)
+    for file in files:
+        print_prediction(file, predictor)
 
 if __name__ == "__main__":
     tf.app.run(main=main)
+

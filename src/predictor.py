@@ -6,22 +6,28 @@ from tensorflow.examples.tutorials.mnist import input_data
 from train_model import fill_feed_dict, do_eval
 from train_model import placeholder_inputs, graph_model, calcul_loss, training, evaluation
 
-def predict(img, HYPARMS):
-    placebundle = placeholder_inputs(1)
-    ckpt = tf.train.get_checkpoint_state(HYPARMS.ckpt_dir)
+saverflag = False
 
-    init = tf.initialize_all_variables()
-    saver = tf.train.Saver()
-
+class Predictor:
     sess = tf.Session()
-    sess.run(init)
+    def __init__(self,HYPARMS):
+        self.init(HYPARMS)
 
-    saver.restore(sess, ckpt.model_checkpoint_path)
+    def predict(self, img):
+        return self.sess.run(self.output, feed_dict = {self.placebundle.x: img,
+                                  self.placebundle.keep_prob: 1})
 
-    logits = graph_model(placebundle)
-    output = tf.argmax(logits,1)
-    # loss = calcul_loss(logits, placebundle)
-    # train_op = training(loss, HYPARMS.learning_rate)
-    # eval_correct = evaluation(logits, placebundle)
-    return sess.run(output, feed_dict = {placebundle.x: img,
-                                  placebundle.keep_prob: 1})
+    def init(self,HYPARMS):
+        sess = tf.Session()
+        self.placebundle = placeholder_inputs(1)
+
+        self.init = tf.initialize_all_variables()
+        self.saver = tf.train.Saver()
+        self.sess.run(self.init)
+
+        self.ckpt = tf.train.get_checkpoint_state(HYPARMS.ckpt_dir)
+        self.saver.restore(sess, self.ckpt.model_checkpoint_path)
+
+        self.logits = graph_model(self.placebundle)
+        self.output = tf.argmax(self.logits,1)
+
